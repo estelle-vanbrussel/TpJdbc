@@ -90,4 +90,32 @@ public class Etudiant {
 				+ "annee=" + annee + ", groupe=" + groupe + ", "
 				+ "]";
 	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+
+		Etudiant etudiant = (Etudiant) o;
+
+		if (numEt != etudiant.numEt) return false;
+		if (annee != etudiant.annee) return false;
+		if (groupe != etudiant.groupe) return false;
+		if (!nomEt.equals(etudiant.nomEt)) return false;
+		if (!prenomEt.equals(etudiant.prenomEt)) return false;
+		if (!cpEt.equals(etudiant.cpEt)) return false;
+		return villeEt.equals(etudiant.villeEt);
+	}
+
+	@Override
+	public int hashCode() {
+		int result = numEt;
+		result = 31 * result + nomEt.hashCode();
+		result = 31 * result + prenomEt.hashCode();
+		result = 31 * result + cpEt.hashCode();
+		result = 31 * result + villeEt.hashCode();
+		result = 31 * result + annee;
+		result = 31 * result + groupe;
+		return result;
+	}
 }
