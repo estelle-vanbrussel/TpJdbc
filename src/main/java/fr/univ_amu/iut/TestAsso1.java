@@ -33,10 +33,10 @@ public class TestAsso1 {
             // Creation d'une instruction SQL
             Statement stmt = conn.createStatement();
             // Execution de la requete
-            System.out.println("Execution de la requete : " + req);
+            System.out.println("Execution de la requete : " + req );
             ResultSet rset = stmt.executeQuery(req);
             // Affichage du resultat
-            List<Prof> profs = new ArrayList<>();
+            ArrayList<Prof> profs = new ArrayList<>();
             while (rset.next()){
                 Prof prof = creerProf(rset);
                 profs.add(prof);
@@ -69,35 +69,46 @@ public class TestAsso1 {
     }
 
     private static Module creerModule(String code) throws SQLException {
-        Connection conn = ConnexionUnique.getInstance().getConnection();
-        PreparedStatement preparedStmt = conn.prepareStatement(reqModule);
-        preparedStmt.setString(1, code);
-        ResultSet resultSet = preparedStmt.executeQuery();
-        return creerModule(resultSet);
+        Module module = new Module();
+        try (Connection conn = ConnexionUnique.getInstance().getConnection()){
+            PreparedStatement preparedStmt = conn.prepareStatement(reqModule);
+            preparedStmt.setString(1, code);
+            module = creerModule(preparedStmt.executeQuery());
+
+        }catch(SQLException e) {
+            e.printStackTrace();// Arggg!!!
+            System.out.println(e.getMessage() + "\n");
+        }
+        return module;
     }
 
      private static Prof  creerProf(int numProf) throws SQLException {
-        Connection conn = ConnexionUnique.getInstance().getConnection();
-        PreparedStatement preparedStmt = conn.prepareStatement(reqProf);
-        preparedStmt.setInt(1, numProf);
-        ResultSet resultSet = preparedStmt.executeQuery();
-        return creerProf(resultSet);
+        Prof prof = new Prof();
+        try(Connection conn = ConnexionUnique.getInstance().getConnection()) {
+            PreparedStatement preparedStmt = conn.prepareStatement(reqProf);
+            preparedStmt.setInt(1, numProf);
+            prof = creerProf(preparedStmt.executeQuery());
+        }catch(SQLException e) {
+            e.printStackTrace();// Arggg!!!
+            System.out.println(e.getMessage() + "\n");
+        }
+        return prof;
     }
 
     private static Module creerModule(ResultSet rset2) throws SQLException {
-        Module MatSpec = new Module();
-        MatSpec.setCode(rset2.getString("CODE"));
-        MatSpec.setLibelle(rset2.getString("LIBELLE"));
-        MatSpec.setCoefCc(rset2.getInt("COEFF_CC"));
-        MatSpec.setCoefTest(rset2.getInt("COEFF_TEST"));
-        MatSpec.setDiscipline(rset2.getString("DISCIPLINE"));
-        MatSpec.sethCoursPrev(rset2.getInt("H_COURS_PREV"));
-        MatSpec.sethCoursRea(rset2.getInt("H_COURS_REA"));
-        MatSpec.sethTpPrev(rset2.getInt("H_TP_PREV"));
-        MatSpec.sethTpRea(rset2.getInt("H_TP_REA"));
-        MatSpec.setResponsable(creerProf(rset2.getInt("RESP")));
-        MatSpec.setPere(creerModule(rset2.getString("CODEPERE")));
-        return MatSpec;
+        Module module = new Module();
+        module.setCode(rset2.getString("CODE"));
+        module.setLibelle(rset2.getString("LIBELLE"));
+        module.setCoefCc(rset2.getInt("COEFF_CC"));
+        module.setCoefTest(rset2.getInt("COEFF_TEST"));
+        module.setDiscipline(rset2.getString("DISCIPLINE"));
+        module.sethCoursPrev(rset2.getInt("H_COURS_PREV"));
+        module.sethCoursRea(rset2.getInt("H_COURS_REA"));
+        module.sethTpPrev(rset2.getInt("H_TP_PREV"));
+        module.sethTpRea(rset2.getInt("H_TP_REA"));
+        module.setResponsable(creerProf(rset2.getInt("RESP")));
+        module.setPere(creerModule(rset2.getString("CODEPERE")));
+        return module;
     }
 
 }

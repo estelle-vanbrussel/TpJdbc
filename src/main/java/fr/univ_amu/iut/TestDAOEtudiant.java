@@ -1,5 +1,7 @@
 package fr.univ_amu.iut;
 
+import fr.univ_amu.iut.DAO.DAOEtudiant;
+import fr.univ_amu.iut.DAO.JDBC.DAOEtudiantJDBC;
 import fr.univ_amu.iut.beans.Etudiant;
 
 import java.sql.Connection;
@@ -10,12 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by v16005687 on 25/09/17.
+ * Created by v16005687 on 29/09/17.
  */
-public class TestEntite {
-    // La requete de test
+public class TestDAOEtudiant {
     static final String req = "SELECT * " +
-            "FROM ETUDIANT " ;
+            "FROM ETUDIANT ET, NOTATION NO " +
+            "WHERE ET.NUM_ET = NO.NUM_ET";
 
     public static void main(String[] args) throws SQLException {
         // Connexion a la base
@@ -30,8 +32,10 @@ public class TestEntite {
             // Affichage du resultat
             List<Etudiant> etudiants = new ArrayList<>();
             while (rset.next()){
-                Etudiant etudiant = creerEtudiant(rset);
-                etudiants.add(etudiant);
+                DAOEtudiant dao = new DAOEtudiantJDBC();
+                Etudiant e = creerEtudiant(rset);
+                e= dao.insert(e);
+                etudiants.add(e);
             }
 
             // Fermeture de l'instruction (liberation des ressources)
